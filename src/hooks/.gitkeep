@@ -1,0 +1,4 @@
+// Custom hooks will be added as the project grows.
+// Example: useScrollProgress, useMediaQuery, etc.
+
+export {};
