@@ -99,7 +99,7 @@ const certifications = [
 ];
 
 export default function CertificationsPage() {
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState(-1);
 
   return (
     <main className="min-h-screen bg-[#09090B] text-white">
