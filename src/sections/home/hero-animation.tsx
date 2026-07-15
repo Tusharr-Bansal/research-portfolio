@@ -493,11 +493,6 @@ export function HeroAnimation({ className }: HeroAnimationProps) {
   const [beat, setBeat] = useState(0);
   const [activeNeuronSet, setActiveNeuronSet] = useState<Set<number>>(new Set());
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const parallaxX = useTransform(mouseX, [-1, 1], [-4, 4]);
-  const parallaxY = useTransform(mouseY, [-1, 1], [-3, 3]);
-
   /** Generated once, memoized — the anatomical neural structure never
    * needs to be recomputed on re-render. */
   const neurons = useMemo(() => generateNeurons(), []);
@@ -558,22 +553,7 @@ export function HeroAnimation({ className }: HeroAnimationProps) {
   }, [isComplete, ambientCandidates]);
 
   /** Subtle mouse parallax — kept under 5px, text remains primary focus */
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!containerRef.current || prefersReducedMotion) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      mouseX.set(x * 2);
-      mouseY.set(y * 2);
-    },
-    [mouseX, mouseY, prefersReducedMotion]
-  );
 
-  const handleMouseLeave = useCallback(() => {
-    mouseX.set(0);
-    mouseY.set(0);
-  }, [mouseX, mouseY]);
 
   /** Map ECG sample particles toward a spread of neuron soma positions,
    * so the dissolve→reorganize stage seeds directly into real anatomy. */
@@ -600,13 +580,10 @@ export function HeroAnimation({ className }: HeroAnimationProps) {
     <div
       ref={containerRef}
       className={className}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       aria-hidden="true"
       style={{ background: "transparent" }}
     >
       <motion.div
-        style={{ x: parallaxX, y: parallaxY }}
         animate={
           isComplete && !prefersReducedMotion
             ? { scale: [1, 1.012, 1] }

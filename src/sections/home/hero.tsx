@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { ArrowRight, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { researchInterests } from "@/data/research";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { HeroAnimation } from "@/sections/home/hero-animation";
+import { SkillChip } from "@/sections/home/SkillChip";
 
 export function Hero() {
+  const [openSkill, setOpenSkill] = useState<string | null>(null);
   return (
     <section className="section-padding min-h-[92vh] flex items-center bg-[#09090B]">
       <div className="container-wide w-full">
@@ -68,7 +71,7 @@ export function Hero() {
             </motion.div>
 
             {/* Research area pills */}
-            <motion.div variants={fadeInUp} className="mt-12">
+            {/* <motion.div variants={fadeInUp} className="mt-12">
               <p className="mb-4 text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
                 Research Areas
               </p>
@@ -82,6 +85,36 @@ export function Hero() {
                   </li>
                 ))}
               </ul>
+            </motion.div> */}
+            <motion.div
+              variants={fadeInUp}
+              className="mt-12"
+            >
+              <p className="mb-4 text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
+                Research Areas
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+
+                {researchInterests.map((skill) => (
+
+                  <SkillChip
+                    key={skill.title}
+                    skill={skill}
+                    open={openSkill === skill.title}
+                    onToggle={() =>
+                      setOpenSkill(
+                        openSkill === skill.title
+                          ? null
+                          : skill.title
+                      )
+                    }
+                  />
+
+                ))}
+
+              </div>
+
             </motion.div>
 
             {/* CTAs */}

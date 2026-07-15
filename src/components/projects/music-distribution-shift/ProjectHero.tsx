@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
+import { FileText, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 const tags = [
   "Audio AI",
@@ -61,22 +62,30 @@ export default function ProjectHero() {
             transition={{ delay: 0.4 }}
             className="mt-10 flex flex-wrap gap-4"
           >
-            <Link
-              href="https://github.com/21f3001891/dl-project-21f3001891"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full border border-indigo-500/30 bg-transparent px-6 py-3 text-sm font-medium text-indigo-300 transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-500/10 hover:text-white"
-            >
-              GitHub
-            </Link>
+            <a
+                href="https://github.com/21f3001891/dl-project-21f3001891"
+                target="_blank"
+                className="mt-12 inline-flex items-center gap-3 rounded-full border border-indigo-500/20 bg-indigo-500/5 px-6 py-3 transition hover:bg-indigo-500/10"
+              >
+                <FileText className="h-5 w-5 text-indigo-400" />
 
-            <Link
-              href="/papers/music-distribution-shift-report.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full border border-indigo-500/30 bg-transparent px-6 py-3 text-sm font-medium text-indigo-300 transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-500/10 hover:text-white"            >
-              Read Report
-            </Link>
+                GitHub
+                <ArrowUpRight className="h-4 w-4 text-indigo-400" />
+
+              </a>
+
+            <a
+                href="\papers\music-distribution-shift-report.pdf"
+                target="_blank"
+                className="mt-12 inline-flex items-center gap-3 rounded-full border border-indigo-500/20 bg-indigo-500/5 px-6 py-3 transition hover:bg-indigo-500/10"
+              >
+                <FileText className="h-5 w-5 text-indigo-400" />
+
+                Read Report
+
+                <ArrowUpRight className="h-4 w-4 text-indigo-400" />
+
+              </a>
           </motion.div>
 
         {/* Metric */}
