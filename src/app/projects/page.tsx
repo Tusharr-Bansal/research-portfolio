@@ -6,6 +6,36 @@ import { ArrowUpRight } from "lucide-react";
 
 const projects = [
   {
+    title: "FindXRay: Similar-Case Search for Chest X-rays",
+    description:
+      "Built a deployed chest X-ray case finder that encodes images in the browser with an int8 RAD-DINO model, retrieves similar cases from a 2,517-study library, and drafts cited reports with a LangGraph agent, reaching 0.496 CheXbert F1 vs 0.374 without retrieval.",
+    status: "Medical AI",
+    tags: [
+      "RAD-DINO",
+      "ONNX Runtime Web",
+      "LangGraph",
+      "Langfuse",
+      "FastAPI",
+    ],
+    href: "/projects/findxray",
+    cta: "Explore Project",
+  },
+  {
+    title: "SeeCite: Research Assistant with Verified Citations",
+    description:
+      "Built a deployed RAG agent that answers questions over uploaded research papers with code-validated citations, using hybrid BM25 + vector retrieval (Recall@10 0.78 vs 0.64 vector-only) and zero invalid citations across 174 evaluated answers.",
+    status: "Agentic AI",
+    tags: [
+      "RAG",
+      "pgvector",
+      "BM25",
+      "Gemini",
+      "FastAPI",
+    ],
+    href: "/projects/seecite",
+    cta: "Explore Project",
+  },
+  {
     title: "Music Genre Classification under Distribution Shift",
     description:
       "Investigated robust music genre classification under distribution shift by combining synthetic data generation, deep learning architectures, and transformer-based models.",

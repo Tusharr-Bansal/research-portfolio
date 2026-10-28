@@ -1,10 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const projects = [
+  {
+    title: "FindXRay: Similar-Case Search for Chest X-rays",
+    description:
+      "Built a deployed chest X-ray case finder that encodes images in the browser, retrieves similar past cases from a 2,517-study library, and drafts cited reports with a LangGraph agent, improving report F1 from 0.374 to 0.496 over the same model without retrieval.",
+    status: "Medical AI",
+    year: "2026",
+    href: "/projects/findxray",
+  },
+  {
+    title: "SeeCite: Research Assistant with Verified Citations",
+    description:
+      "Built a deployed RAG agent that answers questions over uploaded research papers with code-validated citations, using hybrid BM25 + vector retrieval and reaching zero invalid citations across 174 evaluated answers.",
+    status: "Agentic AI",
+    year: "2026",
+    href: "/projects/seecite",
+  },
+  {
+    title: "Clustering Districts by Educational Performance Using Machine Learning and Neutrosophic Logic",
+    description:
+      "Proposed a statistically grounded neutrosophic feature transformation for clustering 768 Indian districts using the Performance Grading Index–District (PGID) dataset, enabling uncertainty-aware educational analytics and improved pattern discrimination.",
+    status: "Conference Paper",
+    year: "2026",
+    href: "/publications/",
+  },
   {
     title: "Music Genre Classification under Distribution Shift",
     description:
@@ -21,17 +46,66 @@ const projects = [
     year: "2025",
     href: "/projects/comment-category-classification",
   },
-  {
-    title: "Clustering Districts by Educational Performance Using Machine Learning and Neutrosophic Logic",
-    description:
-      "Proposed a statistically grounded neutrosophic feature transformation for clustering 768 Indian districts using the Performance Grading Index–District (PGID) dataset, enabling uncertainty-aware educational analytics and improved pattern discrimination.",
-    status: "Conference Paper",
-    year: "2026",
-    href: "/publications/",
-  },
 ];
 
 export function FeaturedResearch() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: false });
+  const [atEnd, setAtEnd] = useState(false);
+
+  const updateEnd = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 8);
+  }, []);
+
+  useEffect(() => {
+    updateEnd();
+    window.addEventListener("resize", updateEnd);
+    return () => window.removeEventListener("resize", updateEnd);
+  }, [updateEnd]);
+
+  /** Move one card to the right; from the last card, go back to the first. */
+  const next = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    if (atEnd) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    const step = card ? card.offsetWidth + 32 : el.clientWidth * 0.8;
+    el.scrollBy({ left: step, behavior: "smooth" });
+  };
+
+  /* Click-and-drag with a mouse (touch and trackpads scroll natively) */
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse" || !trackRef.current) return;
+    drag.current = { active: true, startX: e.clientX, startScroll: trackRef.current.scrollLeft, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    const el = trackRef.current;
+    if (!d.active || !el) return;
+    const dx = e.clientX - d.startX;
+    if (Math.abs(dx) > 5) {
+      d.moved = true;
+      el.style.scrollSnapType = "none";
+    }
+    el.scrollLeft = d.startScroll - dx;
+  };
+  const endDrag = () => {
+    drag.current.active = false;
+    if (trackRef.current) trackRef.current.style.scrollSnapType = "";
+  };
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (drag.current.moved) {
+      e.preventDefault();
+      e.stopPropagation();
+      drag.current.moved = false;
+    }
+  };
+
   return (
     <section
       id="featured-research"
@@ -69,11 +143,24 @@ export function FeaturedResearch() {
           natural language processing, and production software engineering.
         </motion.p>
 
-        <div className="mt-16 grid gap-8 lg:grid-cols-3">
+        <div className="relative mt-12">
+
+        <div
+          ref={trackRef}
+          onScroll={updateEnd}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerLeave={endDrag}
+          onClickCapture={onClickCapture}
+          className="flex cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth py-4 pr-16 select-none active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
 
           {projects.map((project, index) => (
 
             <motion.div
+              data-card
+              className="w-[85%] shrink-0 snap-start sm:w-[60%] lg:w-[calc((100%-4rem)/3)]"
               key={project.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -81,7 +168,7 @@ export function FeaturedResearch() {
               transition={{ delay: index * .1 }}
             >
 
-              <Link href={project.href}>
+              <Link href={project.href} draggable={false} className="block h-full">
 
                 <article
                   className="
@@ -169,6 +256,17 @@ export function FeaturedResearch() {
             </motion.div>
 
           ))}
+
+        </div>
+
+        <button
+          type="button"
+          onClick={next}
+          aria-label={atEnd ? "Back to first project" : "Next project"}
+          className="absolute right-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-brand/30 bg-[#09090B]/90 text-brand shadow-[0_10px_30px_rgba(0,0,0,.5)] backdrop-blur transition hover:border-brand/60 hover:bg-brand/10"
+        >
+          <ChevronRight className={`h-5 w-5 transition-transform duration-300 ${atEnd ? "rotate-180" : ""}`} />
+        </button>
 
         </div>
 
